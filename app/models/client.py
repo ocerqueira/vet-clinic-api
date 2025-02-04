@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import date
 
 class Client(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True, nullable=False)
     name: str = Field(max_length=100)
     lastname: str = Field(max_length=100)
     gender: Optional[str] = Field(max_length=10, nullable=True)
