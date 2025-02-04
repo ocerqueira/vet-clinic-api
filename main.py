@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+from app.config.database import init_db
+
+init_db()
 
 app = FastAPI(title="Clinica Veterinária API", version="1.0")
 
