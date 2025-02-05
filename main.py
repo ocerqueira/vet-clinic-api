@@ -7,7 +7,7 @@ app = FastAPI(title="Clinica Veterinária API", version="1.0")
 
 init_db()
 
-app.include_router(users.router, prefix="/api/users")
+app.include_router(users.router, prefix="/api")
 app.include_router(clients.router, prefix="/api")
 app.include_router(patients.router, prefix="/api")
 app.include_router(auth.router, prefix="/auth")

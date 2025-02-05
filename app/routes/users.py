@@ -7,10 +7,10 @@ from app.schemas.user import UserCreate, UserRead
 from app.dependencies.auth import get_current_user
 from app.services.auth import hash_password
 
-router = APIRouter()
+router = APIRouter(prefix="/users")
 
 # Rota protegida: Retorna os dados completos do usuário autenticado
-@router.get("/me", response_model=UserRead)  # ✅ "/api/users/me"
+@router.get("/me", response_model=UserRead)  
 def get_my_profile(
     session: Session = Depends(get_session), 
     current_user: dict = Depends(get_current_user)
@@ -24,7 +24,7 @@ def get_my_profile(
 
 
 # Criar um usuário
-@router.post("/", response_model=UserRead)  # ✅ Agora "/api/users/"
+@router.post("/", response_model=UserRead)  
 def create_user(user_data: UserCreate, session: Session = Depends(get_session)):
     existing_user = session.exec(select(User).where(User.email == user_data.email)).first()
     if existing_user:
@@ -43,13 +43,13 @@ def create_user(user_data: UserCreate, session: Session = Depends(get_session)):
     return user
 
 # Listar todos os usuários
-@router.get("/", response_model=List[UserRead])  # ✅ Agora "/api/users/"
+@router.get("/", response_model=List[UserRead])  
 def get_users(session: Session = Depends(get_session)):
     users = session.exec(select(User)).all()
     return users
 
 # Obter um usuário por ID
-@router.get("/{user_id}", response_model=UserRead)  # ✅ "/api/users/{user_id}"
+@router.get("/{user_id}", response_model=UserRead)  
 def get_user(user_id: int, session: Session = Depends(get_session)):
     user = session.get(User, user_id)
     if not user:
@@ -57,7 +57,7 @@ def get_user(user_id: int, session: Session = Depends(get_session)):
     return user
 
 # Atualizar um usuário por ID
-@router.put("/{user_id}", response_model=User)  # ✅ "/api/users/{user_id}"
+@router.put("/{user_id}", response_model=User)  
 def update_user(user_id: int, user_data: User, session: Session = Depends(get_session)):
     user = session.get(User, user_id)
     if not user:
@@ -73,7 +73,7 @@ def update_user(user_id: int, user_data: User, session: Session = Depends(get_se
     return user
 
 # Deletar um usuário por ID
-@router.delete("/{user_id}")  # ✅ "/api/users/{user_id}"
+@router.delete("/{user_id}")  
 def delete_user(user_id: int, session: Session = Depends(get_session)):
     user = session.get(User, user_id)
     if not user:

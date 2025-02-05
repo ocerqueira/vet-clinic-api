@@ -3,34 +3,35 @@ from sqlmodel import Session, select
 from typing import List
 from app.config.database import get_session
 from app.models.patient import Patient
+from app.dependencies.auth import get_current_user
 
-router = APIRouter()
+router = APIRouter(prefix="/patients")
 
 # Criar um paciente
-@router.post("/patients/", response_model=Patient)
-def create_patient(patient: Patient, session: Session = Depends(get_session)):
+@router.post("/", response_model=Patient)
+def create_patient(patient: Patient, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     session.add(patient)
     session.commit()
     session.refresh(patient)
     return patient
 
 # Listar todos os pacientes
-@router.get("/patients/", response_model=List[Patient])
-def get_patients(session: Session = Depends(get_session)):
+@router.get("/", response_model=List[Patient])
+def get_patients(session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     patients = session.exec(select(Patient)).all()
     return patients
 
 # Obter um paciente por ID
-@router.get("/patients/{patient_id}", response_model=Patient)
-def get_patient(patient_id: int, session: Session = Depends(get_session)):
+@router.get("/{patient_id}", response_model=Patient)
+def get_patient(patient_id: int, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     patient = session.get(Patient, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Paciente não encontrado")
     return patient
 
 # Atualizar um paciente por ID
-@router.put("/patients/{patient_id}", response_model=Patient)
-def update_patient(patient_id: int, patient_data: Patient, session: Session = Depends(get_session)):
+@router.put("/{patient_id}", response_model=Patient)
+def update_patient(patient_id: int, patient_data: Patient, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     patient = session.get(Patient, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Paciente não encontrado")
@@ -45,8 +46,8 @@ def update_patient(patient_id: int, patient_data: Patient, session: Session = De
     return patient
 
 # Deletar um paciente por ID
-@router.delete("/patients/{patient_id}")
-def delete_patient(patient_id: int, session: Session = Depends(get_session)):
+@router.delete("/{patient_id}")
+def delete_patient(patient_id: int, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     patient = session.get(Patient, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Paciente não encontrado")

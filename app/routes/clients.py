@@ -3,34 +3,35 @@ from sqlmodel import Session, select
 from typing import List
 from app.config.database import get_session
 from app.models.client import Client
+from app.dependencies.auth import get_current_user
 
-router = APIRouter()
+router = APIRouter(prefix="/clients")
 
 # Criar um cliente
-@router.post("/clients/", response_model=Client)
-def create_client(client: Client, session: Session = Depends(get_session)):
+@router.post("/", response_model=Client)
+def create_client(client: Client, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     session.add(client)
     session.commit()
     session.refresh(client)
     return client
 
 # Listar todos os clientes
-@router.get("/clients/", response_model=List[Client])
-def get_clients(session: Session = Depends(get_session)):
+@router.get("/", response_model=List[Client])
+def get_clients(session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     clients = session.exec(select(Client)).all()
     return clients
 
 # Obter um cliente por ID
-@router.get("/clients/{client_id}", response_model=Client)
-def get_client(client_id: int, session: Session = Depends(get_session)):
+@router.get("/{client_id}", response_model=Client)
+def get_client(client_id: int, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     client = session.get(Client, client_id)
     if not client:
         raise HTTPException(status_code=404, detail="Cliente não encontrado")
     return client
 
 # Atualizar um cliente por ID
-@router.put("/clients/{client_id}", response_model=Client)
-def update_client(client_id: int, client_data: Client, session: Session = Depends(get_session)):
+@router.put("/{client_id}", response_model=Client)
+def delete_client(client_id: int, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     client = session.get(Client, client_id)
     if not client:
         raise HTTPException(status_code=404, detail="Cliente não encontrado")
@@ -45,7 +46,7 @@ def update_client(client_id: int, client_data: Client, session: Session = Depend
     return client
 
 # Deletar um cliente por ID
-@router.delete("/clients/{client_id}")
+@router.delete("/{client_id}")
 def delete_client(client_id: int, session: Session = Depends(get_session)):
     client = session.get(Client, client_id)
     if not client:
