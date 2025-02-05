@@ -3,25 +3,27 @@ from sqlmodel import Session, select
 from typing import List
 from app.config.database import get_session
 from app.models.user import User
+from app.schemas.user import UserCreate, UserRead 
 
 router = APIRouter()
 
-# Criar um usuário
-@router.post("/users/", response_model=User)
-def create_user(user: User, session: Session = Depends(get_session)):
+# Criar um usuário (Usamos UserCreate para entrada e UserRead para saída)
+@router.post("/users/", response_model=UserRead)
+def create_user(user_data: UserCreate, session: Session = Depends(get_session)):
+    user = User(**user_data.dict())  # Criamos o objeto sem ID
     session.add(user)
     session.commit()
     session.refresh(user)
     return user
 
 # Listar todos os usuários
-@router.get("/users/", response_model=List[User])
+@router.get("/users/", response_model=List[UserRead])
 def get_users(session: Session = Depends(get_session)):
-    users = session.exec(select(User)).all()  # ✅ Correção aplicada aqui
+    users = session.exec(select(User)).all()  
     return users
 
 # Obter um usuário por ID
-@router.get("/users/{user_id}", response_model=User)
+@router.get("/users/{user_id}", response_model=UserRead)
 def get_user(user_id: int, session: Session = Depends(get_session)):
     user = session.get(User, user_id)
     if not user:
