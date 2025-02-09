@@ -3,13 +3,13 @@ from sqlmodel import Session, select
 from typing import List
 from app.config.database import get_session
 from app.models.client import Client
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import get_current_user, is_admin
 
 router = APIRouter(prefix="/clients")
 
 # Criar um cliente
 @router.post("/", response_model=Client)
-def create_client(client: Client, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
+def create_client(client: Client, session: Session = Depends(get_session), current_user: dict = Depends(is_admin)):
     session.add(client)
     session.commit()
     session.refresh(client)

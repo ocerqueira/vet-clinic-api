@@ -7,7 +7,7 @@ from alembic import context
 
 from sqlmodel import SQLModel
 from app.models.user import User
-from app.models.client import Client 
+from app.models.client import Client
 from app.models.patient import Patient
 
 # this is the Alembic Config object, which provides

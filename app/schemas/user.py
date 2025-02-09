@@ -7,7 +7,9 @@ class UserCreate(SQLModel):
     username: str
     email: str
     hashed_password: str
+    role: Optional[str] = "user"
 
 # Esquema para Retornar Usuário (com ID)
 class UserRead(UserCreate):
     id: int
+    password: Optional[str] = None

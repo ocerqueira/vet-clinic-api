@@ -35,7 +35,8 @@ def create_user(user_data: UserCreate, session: Session = Depends(get_session)):
         name=user_data.name,
         username=user_data.username,
         email=user_data.email,
-        hashed_password=hashed_password
+        hashed_password=hashed_password,
+        role=user_data.role
     )
     session.add(user)
     session.commit()

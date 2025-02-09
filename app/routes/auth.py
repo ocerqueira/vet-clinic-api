@@ -16,5 +16,5 @@ def login(login_data: LoginData, session: Session = Depends(get_session)):
         raise HTTPException(status_code=401, detail="Usuário ou senha incorretos")
 
     # Gera o token JWT
-    access_token = create_access_token(data={"sub": user.username}, expires_delta=timedelta(minutes=30))
+    access_token = create_access_token(data={"sub": user.username, "role": user.role}, expires_delta=timedelta(minutes=30))
     return {"access_token": access_token, "token_type": "bearer"}
