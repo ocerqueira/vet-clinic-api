@@ -17,7 +17,7 @@ def create_client(client: Client, session: Session = Depends(get_session), curre
 
 # Listar todos os clientes
 @router.get("/", response_model=List[Client])
-def get_clients(session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
+def get_clients(session: Session = Depends(get_session)):
     clients = session.exec(select(Client)).all()
     return clients
 

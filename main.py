@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.config.database import init_db
+from app.middleware.auth_middleware import AuthMiddleware
 from app.routes import users, clients, patients, auth
 
 
@@ -7,6 +8,7 @@ app = FastAPI(title="Clinica Veterinária API", version="1.0")
 
 init_db()
 
+app.add_middleware(AuthMiddleware)
 app.include_router(users.router, prefix="/api")
 app.include_router(clients.router, prefix="/api")
 app.include_router(patients.router, prefix="/api")
