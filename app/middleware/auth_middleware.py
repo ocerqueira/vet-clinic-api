@@ -1,8 +1,10 @@
-from fastapi import Request, HTTPException
-from starlette.middleware.base import BaseHTTPMiddleware
-from app.services.auth import verify_access_token, is_token_revoked
-from app.config.database import get_session
+from fastapi import HTTPException, Request
 from sqlmodel import Session
+from starlette.middleware.base import BaseHTTPMiddleware
+
+from app.config.database import get_session
+from app.services.auth import is_token_revoked, verify_access_token
+
 
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):

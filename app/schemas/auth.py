@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from sqlmodel import SQLModel
 
+
 # Schema para login (entrada de dados)
 class LoginData(SQLModel):
     username: str

@@ -14,9 +14,55 @@ dependencies = [
     "python-jose[cryptography]>=3.3.0",
     "redis>=5.2.1",
     "sqlmodel>=0.0.22",
+    "taskipy>=1.14.1",
 ]
 
 [dependency-groups]
 dev = [
     "ruff>=0.9.4",
 ]
+
+
+[tool.ruff]
+# Define a versão do Python usada no projeto
+target-version = "py313"  # 🔥 Altere para sua versão do Python
+
+# Ativar apenas algumas regras específicas do Ruff
+select = ["E", "F", "I", "N", "W", "UP", "B", "C90"]
+
+# Ativar formatação automática (como o Black)
+line-length = 88  # 🔥 Define o limite de caracteres por linha
+
+# Ignorar algumas regras específicas (caso necessário)
+ignore = ["E501"]  # Ignora erro de linha longa (caso prefira)
+
+[tool.ruff.format]
+# Formatação similar ao Black
+quote-style = "double"  # Usar aspas duplas em strings
+indent-style = "space"
+line-ending = "lf"
+
+
+
+
+[tool.taskipy.tasks]
+#  Tarefa para rodar o servidor FastAPI
+run = "uvicorn main:app --reload"
+
+#  Rodar o Ruff para verificar erros no código
+lint = "ruff check ."
+
+#  Corrigir automaticamente os erros encontrados pelo Ruff
+format = "ruff check . --fix"
+
+#  Rodar os testes com pytest
+test = "pytest -v"
+
+#  Criar uma nova migration automaticamente
+migrate = "alembic revision --autogenerate -m"
+
+#  Aplicar as migrations no banco de dados
+upgrade = "alembic upgrade head"
+
+#  Rodar tudo de uma vez (Lint + Testes + Formatação)
+all = "task lint && task format && task test"

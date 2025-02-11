@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
+
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from typing import Optional
-from app.config.database import get_session
 from sqlmodel import Session, select
-from app.models.revoked_token import RevokedToken 
+
+from app.models.revoked_token import RevokedToken
 
 # Configurações do Token
 SECRET_KEY = "mysecretkey"  # 🔥 Substitua por uma chave segura
@@ -25,7 +25,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 # Função para gerar um token JWT
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta if expires_delta else timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})

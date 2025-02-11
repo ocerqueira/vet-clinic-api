@@ -1,22 +1,23 @@
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
-from typing import List
+
 from app.config.database import get_session
+from app.dependencies.auth import get_current_user
 from app.models.user import User
 from app.schemas.user import UserCreate, UserRead
-from app.dependencies.auth import get_current_user
 from app.services.auth import hash_password
 
 router = APIRouter(prefix="/users")
 
 # Rota protegida: Retorna os dados completos do usuário autenticado
-@router.get("/me", response_model=UserRead)  
+@router.get("/me", response_model=UserRead)
 def get_my_profile(
-    session: Session = Depends(get_session), 
+    session: Session = Depends(get_session),
     current_user: dict = Depends(get_current_user)
 ):
     user = session.exec(select(User).where(User.username == current_user["sub"])).first()
-    
+
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
@@ -24,7 +25,7 @@ def get_my_profile(
 
 
 # Criar um usuário
-@router.post("/", response_model=UserRead)  
+@router.post("/", response_model=UserRead)
 def create_user(user_data: UserCreate, session: Session = Depends(get_session)):
     existing_user = session.exec(select(User).where(User.email == user_data.email)).first()
     if existing_user:
@@ -44,13 +45,13 @@ def create_user(user_data: UserCreate, session: Session = Depends(get_session)):
     return user
 
 # Listar todos os usuários
-@router.get("/", response_model=List[UserRead])  
+@router.get("/", response_model=list[UserRead])
 def get_users(session: Session = Depends(get_session)):
     users = session.exec(select(User)).all()
     return users
 
 # Obter um usuário por ID
-@router.get("/{user_id}", response_model=UserRead)  
+@router.get("/{user_id}", response_model=UserRead)
 def get_user(user_id: int, session: Session = Depends(get_session)):
     user = session.get(User, user_id)
     if not user:
@@ -58,7 +59,7 @@ def get_user(user_id: int, session: Session = Depends(get_session)):
     return user
 
 # Atualizar um usuário por ID
-@router.put("/{user_id}", response_model=User)  
+@router.put("/{user_id}", response_model=User)
 def update_user(user_id: int, user_data: User, session: Session = Depends(get_session)):
     user = session.get(User, user_id)
     if not user:
@@ -74,7 +75,7 @@ def update_user(user_id: int, user_data: User, session: Session = Depends(get_se
     return user
 
 # Deletar um usuário por ID
-@router.delete("/{user_id}")  
+@router.delete("/{user_id}")
 def delete_user(user_id: int, session: Session = Depends(get_session)):
     user = session.get(User, user_id)
     if not user:

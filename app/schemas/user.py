@@ -1,5 +1,6 @@
+
 from sqlmodel import SQLModel
-from typing import Optional
+
 
 # Esquema para Criar Usuário (sem ID)
 class UserCreate(SQLModel):
@@ -7,9 +8,9 @@ class UserCreate(SQLModel):
     username: str
     email: str
     hashed_password: str
-    role: Optional[str] = "user"
+    role: str | None = "user"
 
 # Esquema para Retornar Usuário (com ID)
 class UserRead(UserCreate):
     id: int
-    password: Optional[str] = None
+    password: str | None = None

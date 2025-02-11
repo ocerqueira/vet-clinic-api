@@ -1,9 +1,10 @@
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
-from typing import List
+
 from app.config.database import get_session
-from app.models.patient import Patient
 from app.dependencies.auth import get_current_user
+from app.models.patient import Patient
 
 router = APIRouter(prefix="/patients")
 
@@ -16,7 +17,7 @@ def create_patient(patient: Patient, session: Session = Depends(get_session), cu
     return patient
 
 # Listar todos os pacientes
-@router.get("/", response_model=List[Patient])
+@router.get("/", response_model=list[Patient])
 def get_patients(session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     patients = session.exec(select(Patient)).all()
     return patients

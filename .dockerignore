@@ -1,0 +1,22 @@
+# Ignorar dependências locais
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# Ignorar ambiente virtual local
+.venv/
+env/
+venv/
+
+# Ignorar configurações do editor
+.vscode/
+.idea/
+
+# Ignorar arquivos do Git
+.git
+.gitignore
+
+# Ignorar caches e configurações locais
+*.db

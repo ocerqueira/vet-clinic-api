@@ -1,8 +1,8 @@
 from fastapi import FastAPI
+
 from app.config.database import init_db
 from app.middleware.auth_middleware import AuthMiddleware
-from app.routes import users, clients, patients, auth
-
+from app.routes import auth, clients, patients, users
 
 app = FastAPI(title="Clinica Veterinária API", version="1.0")
 

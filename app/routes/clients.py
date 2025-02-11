@@ -1,9 +1,10 @@
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
-from typing import List
+
 from app.config.database import get_session
-from app.models.client import Client
 from app.dependencies.auth import get_current_user, is_admin
+from app.models.client import Client
 
 router = APIRouter(prefix="/clients")
 
@@ -16,7 +17,7 @@ def create_client(client: Client, session: Session = Depends(get_session), curre
     return client
 
 # Listar todos os clientes
-@router.get("/", response_model=List[Client])
+@router.get("/", response_model=list[Client])
 def get_clients(session: Session = Depends(get_session)):
     clients = session.exec(select(Client)).all()
     return clients

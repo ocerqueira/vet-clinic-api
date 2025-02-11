@@ -1,9 +1,12 @@
 from fastapi import Depends, HTTPException, Security
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
 from sqlmodel import Session
+
 from app.config.database import get_session
-from app.services.auth import SECRET_KEY, ALGORITHM, is_token_revoked, verify_access_token
+from app.services.auth import (
+    is_token_revoked,
+    verify_access_token,
+)
 
 # Configuração do esquema OAuth2 para receber tokens via "Bearer"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -13,7 +16,7 @@ def get_current_user(token: str = Security(oauth2_scheme), session: Session = De
     payload = verify_access_token(token)
     if payload is None:
         raise HTTPException(status_code=401, detail="Token inválido ou expirado")
-    
+
     if is_token_revoked(token, session):
         raise HTTPException(status_code=401, detail="Token revogado. Faça login novamente.")
     return payload  # Retorna os dados do usuário autenticado

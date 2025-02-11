@@ -1,12 +1,20 @@
+from datetime import timedelta
+
 from fastapi import APIRouter, Depends, HTTPException, Security
 from fastapi.security import OAuth2PasswordBearer
 from sqlmodel import Session, select
-from datetime import timedelta
+
 from app.config.database import get_session
 from app.models.user import User
 from app.schemas.auth import LoginData, RefreshTokenRequest, Token
-from pydantic import BaseModel
-from app.services.auth import create_refresh_token, hash_password, is_token_revoked, revoke_token, verify_password, create_access_token, verify_refresh_token
+from app.services.auth import (
+    create_access_token,
+    create_refresh_token,
+    is_token_revoked,
+    revoke_token,
+    verify_password,
+    verify_refresh_token,
+)
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -33,7 +41,7 @@ def logout(token: str = Security(oauth2_scheme), session: Session = Depends(get_
 @router.post("/refresh", response_model=Token)
 def refresh_token(refresh_request: RefreshTokenRequest, session: Session = Depends(get_session)):
     refresh_token = refresh_request.refresh_token  # 🔥 Agora capturamos corretamente o token
-    
+
     payload = verify_refresh_token(refresh_token)
     if payload is None:
         raise HTTPException(status_code=401, detail="Refresh Token inválido")
@@ -43,5 +51,5 @@ def refresh_token(refresh_request: RefreshTokenRequest, session: Session = Depen
         raise HTTPException(status_code=401, detail="Refresh Token revogado")
 
     new_access_token = create_access_token(data={"sub": payload["sub"], "role": payload.get("role", "user")}, expires_delta=timedelta(minutes=30))
-    
+
     return {"access_token": new_access_token, "token_type": "bearer"}
